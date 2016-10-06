@@ -1,4 +1,0 @@
-﻿abc
-efg
-zhc
-AAA
