@@ -1,4 +1,4 @@
-ws help
+aws help
 ## config the aws-cli on your OS
 # vi ~/.aws/config
 aws configure
