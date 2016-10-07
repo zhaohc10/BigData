@@ -9,6 +9,14 @@ systemctl daemon-reload
 
 systemctl status etcd
 
+fleetctl list-units
+fleetctl list-unit-files
+fleetctl submit myapp.service
+fleetctl start myapp
+fleetctl destroy myapp
+fleetctl journal --lines=100 myapp
+fleetctl journal -f myapp
+
 ```
 
 > ##### Install new software
