@@ -91,5 +91,5 @@ curl -L http://127.0.0.1:4001/v2/stats/leader
 
 > http://www.mbejda.com/setting-up-a-coreos-cluster-on-aws/  
 > https://coreos.com/os/docs/latest/booting-on-ec2.html  
->  https://s3.amazonaws.com/coreos.com/dist/aws/coreos-stable-hvm.template  
+> https://s3.amazonaws.com/coreos.com/dist/aws/coreos-stable-hvm.template  
 
