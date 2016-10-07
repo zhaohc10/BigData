@@ -46,22 +46,22 @@ aws ec2 run-instances \
 
 > https://coreos.com/os/docs/latest/booting-on-ec2.html
 
-- 1.	You need open port 2379, 2380, 7001 and 4001 between servers in the etcd cluster. 
-- 2.	generate one at https://discovery.etcd.io/new?size=3
-- 3. 	Cloud-config is intended to bring up a cluster of machines into a minimal useful state,	On every boot, coreos-cloudinit looks for a config file to configure your host.   
+- 1 .	You need open port 2379, 2380, 7001 and 4001 between servers in the etcd cluster. 
+- 2 .	Generate one at https://discovery.etcd.io/new?size=3
+- 3 . 	Cloud-config is intended to bring up a cluster of machines into a minimal useful state,	On every boot, coreos-cloudinit looks for a config file to configure your host.   
 
-    >  **Note:** 
+    >  **Note:**   
     > - Just launch more with the same cloud-config, new instances will join the cluster regardless of region 
-    > - If the security groups are configured correctly.  
+    > - If the security groups are configured correctly.    
         ```
             sudo coreos-cloudinit --from-file=/home/core/cloud-config.yaml  
         ```
     ```
-    #cloud-config
+    #cloud-config  
     
-    coreos:
-      etcd2:
-        # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=3
+    coreos:  
+      etcd2:  
+        # generate a new token for each unique cluster from https://discovery.etcd.io/new?size=3  
         # specify the initial size of your cluster with ?size=X
         discovery: https://discovery.etcd.io/<token>
         # multi-region and multi-cloud deployments need to use $public_ipv4
@@ -78,21 +78,18 @@ aws ec2 run-instances \
           command: start
     ```
 
-- 4. Verify the fleet service
+- 4 .  Verify the fleet service
 ```
 ssh -i MyKeyPair.pem core@some-public-ip  
 fleetctl list-machines  
 ```
-- 5. If you want to check if that particular instance is a leader execute the following :
+- 5 . If you want to check if that particular instance is a leader execute the following :
 ```
 curl -L http://127.0.0.1:4001/v2/stats/leader  
 ```
+#### Refer
 
-
->  http://www.mbejda.com/setting-up-a-coreos-cluster-on-aws/  
->  https://coreos.com/os/docs/latest/booting-on-ec2.html  
+> http://www.mbejda.com/setting-up-a-coreos-cluster-on-aws/  
+> https://coreos.com/os/docs/latest/booting-on-ec2.html  
 >  https://s3.amazonaws.com/coreos.com/dist/aws/coreos-stable-hvm.template  
 
-```
-aws ec2 run-instances --image-id ami-0eacc46e --count 3 --instance-type t2.micro --key-name autoshift-ca.pem --security-groups coreos --user-data file://core-test.yml  
-```
