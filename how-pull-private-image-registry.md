@@ -1,5 +1,6 @@
 ### How config for pull image from hw registry
 ```
+## have to use this path: /root/.docker
 mkdir -p ~/.docker
 vi config.json
 # past the content of the file download from cce (like follow one)
