@@ -6,7 +6,8 @@ from heapq import heappop, heappush, heappushpop
 import pandas as pd
 
 
-INTERVAL = 5
+INTERVAL = 3
+
 
 class HeapQueue:
     def __init__(self,capacity=10000):
@@ -48,14 +49,29 @@ class TSFrame(object):
             self._queue.drop(min_index, inplace=True)
 
     def push_Y(self,line):
-        LineParser.parse2df_Y(line)
+        LineParser.parse2df_Y(line,self._queue)
 
     def pop(self):
-        tmp_df = self._queue.dropna(axis=0)
-        min_index = tmp_df.min()
-        return
+        if len(self._queue) > 1:
+            tmp_df = self._queue.dropna(axis=0)
+            if len(tmp_df) > 0:
+                min_index = tmp_df.index.min()
+                res = tmp_df.ix[min_index].to_dict()
+                self._queue.drop(min_index, inplace=True)
+                return res
 
+    def nsmallest(self,n):
+        if len(self._queue) > n:
+            tmp_df = self._queue
+            if len(tmp_df) > 0:
+                if len(tmp_df) > n:
+                    nsmallest_index = tmp_df.nsmallest(n,'tms').index.values
+                    res = tmp_df.ix[nsmallest_index].to_dict(orient='records')
+                    self._queue.drop(nsmallest_index,inplace=True)
+                    return res
 
+    def len(self):
+        return len(self._queue)
 
 
 class LineParser(object):
@@ -81,7 +97,6 @@ class LineParser(object):
         tms = int(tmp[-1]) - int(tmp[-1]) % INTERVAL
         time_index = pd.to_datetime(int(tms),unit='s')
         df.loc[time_index, 'tms'] = time_index
-
         record_metrics = record.split(',')
         for metric in record_metrics:
             metric_pair = metric.split('=')
@@ -94,9 +109,7 @@ class LineParser(object):
         tmp = line.decode().replace("\"", "").split(',')
         records= tmp[1:]
         tms = int(tmp[0]) - int(tmp[0])%INTERVAL
-        print(tms)
         time_index = pd.to_datetime(tms,unit='s')
-
         df.loc[time_index, 'tms'] = time_index
         record_metrics = records
         for metric in record_metrics:
@@ -134,7 +147,16 @@ if __name__ == '__main__':
     LineParser.parse2df_X(telegraf_str2, dff)
     LineParser.parse2df_X(telegraf_str3, dff)
 
-    print(dff.head(2))
+    aa = dff.sort_index()
+
+    print('len',len(aa))
+
+    print('aa',aa.index.values)
+
+    print(dff.head(3))
+    print('((((((((((((((((((((((((((((')
+    print(dff.nsmallest(2,'tms').to_dict(orient='records'))
+
 
     nginx_str1 = b'1483570656,latency=101,cost=202'
     nginx_str2 = b'1483570644,latency=111,cost=222'
@@ -145,6 +167,11 @@ if __name__ == '__main__':
 
     drop_index = dff.index.min()
     latest_index = dff.index.max()
+    print('&&&&'*10)
+    cc = dff.ix[latest_index]
+    print(cc,type(cc))
+    dd=cc.to_dict()
+    print('dd',dd, type(dd))
 
     dff.drop(drop_index,inplace=True)
 
@@ -153,11 +180,17 @@ if __name__ == '__main__':
     dfn = dff.dropna(axis=0)
     print('no inplace',dfn.head())
     print(dff.head())
+    print(dff.to_dict(orient='records'))
 
     dff.dropna(axis=0,inplace=True)
-    print(dff.ix(latest_index))
+
+    print('^^^^'*10)
+    print(dff.head())
+    cc = dff.to_dict(orient = 'records')
+    print (cc)
 
     print('*'*50)
+    print(latest_index)
     #
     # one = pd.merge(dff,dfn,on = 'tms')
     # print(one.head(1))
